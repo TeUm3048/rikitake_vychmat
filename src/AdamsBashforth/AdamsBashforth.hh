@@ -15,9 +15,8 @@
  * @tparam T The type of the state variables.
  * @tparam P The type of the parameters.
  */
-template <typename T, typename P>
-class AdamsBashforth : IMultiStepper<T>
-{
+template<typename T, typename P>
+class AdamsBashforth : IMultiStepper<T> {
 public:
     /**
      * @brief Constructs an AdamsBashforth object.
@@ -27,9 +26,9 @@ public:
      * @param numOneStepSteps The number of steps to use the one-step integration scheme before switching to the multi-step scheme.
      */
     AdamsBashforth(System<T, P> &system1, IOneStepper<T> &oneStepper_, int N_)
-        : oneStepper(oneStepper_), system(system1),
-          dx_dt_circular_buffer(N_),
-          N(N_){};
+            : oneStepper(oneStepper_), system(system1),
+              dx_dt_circular_buffer(N_),
+              N(N_) {};
 
     /**
      * @brief Performs a single integration step.
@@ -38,26 +37,22 @@ public:
      * If the number of steps performed is less than N, it uses the one-step integration scheme.
      * Otherwise, it uses the multi-step scheme.
      */
-    inline void doStep() override
-    {
-        if (run < N)
-        {
+    inline void doStep() override {
+        if (run < N) {
             oneStepper.doStep();
             dx_dt_circular_buffer.push_back(system.dx_dt());
             run++;
             return;
         }
-        auto &corrector = correctors[N - 1];
-
+        auto [c, corrector] = correctors[N - 1];
         // x_{n+1} =
         // x_n + h\sum^{k}_{i=0} {u_{-i}f(x_{n-i},x_{n-i})}$
         T fix;
         dx_dt_circular_buffer.push_back(system.dx_dt());
-        for (int i = 0; i < N; ++i)
-        {
-            fix += corrector[i + 1] * dx_dt_circular_buffer[i];
+        for (int i = 0; i < N; ++i) {
+            fix += corrector[i] * dx_dt_circular_buffer[i];
         }
-        system.state += system.step / corrector[0] * fix;
+        system.state += system.step / c * fix;
     };
 
     /**
@@ -65,8 +60,7 @@ public:
      *
      * @return The current state of the system.
      */
-    inline T getState() const override
-    {
+    inline T getState() const override {
         return system.state;
     };
 
@@ -82,15 +76,15 @@ private:
     // The number of steps to use the one-step integration scheme before switching to the multi-step scheme.
     int N;
     // Coefficients for the multi-step scheme.
-    std::vector<std::vector<double>> correctors = {
-        {1, 1},
-        {2, -1, 3},
-        {12, 5, -16, 23},
-        {24, -9, 37, -59, 55},
-        {720, 251, -1274, 2616, -2774, 1901},
-        {1440, -475, 2877, -7298, 9982, -7923, 4277},
-        {60480, 19825, -115732, 336918, -561717, 587482, -392835, 173927},
-        {120960, -36799, 220043, -662724, 1062079, -1154077, 806207, -358163, 98957},
+    std::vector<std::tuple<double, std::vector<double>>> correctors = {
+            {1,      {1}},
+            {2,      {-1,     3}},
+            {12,     {5,      -16,     23}},
+            {24,     {-9,     37,      -59,     55}},
+            {720,    {251,    -1274,   2616,    -2774,   1901}},
+            {1440,   {-475,   2877,    -7298,   9982,    -7923,    4277}},
+            {60480,  {19825,  -115732, 336918,  -561717, 587482,   -392835, 173927}},
+            {120960, {-36799, 220043,  -662724, 1062079, -1154077, 806207,  -358163, 98957}},
     };
 };
 
