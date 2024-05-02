@@ -29,11 +29,11 @@ add_executable(main
         src/IOneStepper.hh
         src/ExplicitMethods/UniversalRungeKuttaStepper/UniversalRungeKuttaStepper.hh
         src/ExplicitMethods/UniversalRungeKuttaStepper/ButcherTable.hh
-        src/RikitakiModel/dx_dt.hh
-        src/RikitakiModel/Parameters.hh
-        src/RikitakiModel/State.hh
-        src/RikitakiModel/dx_dt.cpp
-        src/RikitakiModel/State.cpp
+        src/RikitakeModel/dx_dt.hh
+        src/RikitakeModel/Parameters.hh
+        src/RikitakeModel/State.hh
+        src/RikitakeModel/dx_dt.cpp
+        src/RikitakeModel/State.cpp
         src/ExplicitMethods/RK4.cpp
         src/ExplicitMethods/RK4.hh
         src/ExplicitMethods/DOPRI8.cpp

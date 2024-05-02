@@ -1,6 +1,6 @@
 #include <iostream>
 #include <iomanip>
-#include "RikitakiModel/dx_dt.hh"
+#include "RikitakeModel/dx_dt.hh"
 #include "ExplicitMethods/RK4.hh"
 #include "ExplicitMethods/DOPRI8.hh"
 #include "AdamsBashforth/AdamsBashforth.hh"
