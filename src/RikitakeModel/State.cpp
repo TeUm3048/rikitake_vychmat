@@ -41,3 +41,21 @@ State State::operator*(const double &a) const {
 State operator*(const double &a, const State &state) {
     return state * a;
 }
+
+State State::operator-(const State &a) const {
+    return {this->x - a.x,
+            this->y - a.y,
+            this->z - a.z};
+}
+
+State State::operator-(const double &a) const {
+    return {this->x - a,
+            this->y - a,
+            this->z - a};
+}
+
+State operator-(const double &a, const State &state) {
+    return {-state.x + a,
+            -state.y + a,
+            -state.z + a};
+}

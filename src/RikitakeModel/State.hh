@@ -22,7 +22,13 @@ public:
 
     State operator+(const double &a) const;
 
+    State operator-(const State &a) const;
+
+    State operator-(const double &a) const;
+
     friend State operator+(const double &a, const State &state);
+
+    friend State operator-(const double &a, const State &state);
 
     State operator*(const State &a) const;
 

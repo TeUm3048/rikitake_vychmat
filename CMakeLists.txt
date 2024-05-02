@@ -40,6 +40,8 @@ add_executable(main
         src/ExplicitMethods/DOPRI8.hh
         src/AdamsBashforth/AdamsBashforth.hh
         src/AdamsBashforth/AdamsBashforth.hh
+        src/AdamsMoulton/AdamsMoulton.hh
+        src/AdamsMoulton/last_backward_difference.hh
 )
 
 target_link_libraries(main ${Boost_LIBRARIES})
