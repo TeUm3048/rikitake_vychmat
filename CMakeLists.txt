@@ -1,10 +1,10 @@
-cmake_minimum_required(VERSION 3.10)
 # Указываем минимально необходимую версию CMake
+cmake_minimum_required(VERSION 3.10)
 project(main)
 
 
 # Устанавливаем стандарт C++
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 
@@ -15,21 +15,33 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # find_package(GLU REQUIRED)
 
 
-
+# используем Boost.Program_options
+# дабы не переусложнять, в качестве статической библиотеки
+set(Boost_USE_STATIC_LIBS ON)
+find_package(Boost COMPONENTS program_options REQUIRED)
+include_directories(${BOOST_INCLUDE_DIRS})
 
 # Связываем исполняемый файл с найденными библиотеками
 add_executable(main
         src/main.cpp
-        src/calc_model.h
-        src/calc_model.cpp
-        src/State.h
-        src/State.cpp
-        src/Parameters.h
-        src/explicit_methods/ForwardEuler.h
-        src/explicit_methods/Midpoint.h
-        src/explicit_methods/DOPRI8.h
+        src/System.hh
+        src/IStepper.hh
+        src/IOneStepper.hh
+        src/ExplicitMethods/UniversalRungeKuttaStepper/UniversalRungeKuttaStepper.hh
+        src/ExplicitMethods/UniversalRungeKuttaStepper/ButcherTable.hh
+        src/RikitakiModel/dx_dt.hh
+        src/RikitakiModel/Parameters.hh
+        src/RikitakiModel/State.hh
+        src/RikitakiModel/dx_dt.cpp
+        src/RikitakiModel/State.cpp
+        src/ExplicitMethods/RK4.cpp
+        src/ExplicitMethods/RK4.hh
+        src/ExplicitMethods/DOPRI8.cpp
+        src/ExplicitMethods/DOPRI8.hh
+        src/AdamsBashforth/AdamsBashforth.hh
+        src/AdamsBashforth/AdamsBashforth.hh
 )
 
-# target_link_libraries(main SDL2 X11 OpenGL GLU)
-target_link_libraries(main)
+target_link_libraries(main ${Boost_LIBRARIES})
+
 

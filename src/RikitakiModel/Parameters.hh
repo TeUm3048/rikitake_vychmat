@@ -1,9 +1,9 @@
 //
-// Created by TeUm3 on 05.03.2024.
+// Created by TeUm3 on 01.05.2024.
 //
 
-#ifndef TEST_PARAMETERS_H
-#define TEST_PARAMETERS_H
+#ifndef MAIN_PARAMETERS_HH
+#define MAIN_PARAMETERS_HH
 /**
  * @brief Структура, представляющая параметры системы.
  *
@@ -14,5 +14,4 @@ struct Parametrs {
     double nu; /**< Омическая диссипация. */
     double A; /**< Разница между безразмерными угловыми скоростями дисков. */
 };
-
-#endif //TEST_PARAMETERS_H
+#endif //MAIN_PARAMETERS_HH
