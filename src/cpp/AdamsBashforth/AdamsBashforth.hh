@@ -16,7 +16,7 @@
  * @tparam P The type of the parameters.
  */
 template<typename T, typename P>
-class AdamsBashforth : IMultiStepper<T> {
+class AdamsBashforth : public IMultiStepper<T> {
 public:
     /**
      * @brief Constructs an AdamsBashforth object.
@@ -53,6 +53,7 @@ public:
             fix += corrector[i] * dx_dt_circular_buffer[i];
         }
         system.state += system.step / c * fix;
+        system.time += system.step;
     };
 
     /**

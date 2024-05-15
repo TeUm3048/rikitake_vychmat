@@ -16,7 +16,7 @@
  * @tparam P The type of the parameters.
  */
 template<typename T, typename P>
-class AdamsMoulton : IMultiStepper<T> {
+class AdamsMoulton : public IMultiStepper<T> {
 public:
     /**
      * @brief Constructs an AdamsMoulton object.
@@ -66,14 +66,14 @@ public:
                                          dx_dt_next);
 
             // Correction
-            x_next = x_next +
-                     system.step * gamma / corrector[0] *
-                     last_backward_difference(
-                             dx_dt_circular_buffer.begin(),
-                             dx_dt_circular_buffer.end());
+            x_next += system.step * gamma / corrector[0] *
+                      last_backward_difference(
+                              dx_dt_circular_buffer.begin(),
+                              dx_dt_circular_buffer.end());
         }
 
         system.state = x_next;
+        system.time += system.step;
     };
 
     /**

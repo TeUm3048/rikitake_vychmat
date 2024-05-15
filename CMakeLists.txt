@@ -23,25 +23,26 @@ include_directories(${BOOST_INCLUDE_DIRS})
 
 # Связываем исполняемый файл с найденными библиотеками
 add_executable(main
-        src/main.cpp
-        src/System.hh
-        src/IStepper.hh
-        src/IOneStepper.hh
-        src/ExplicitMethods/UniversalRungeKuttaStepper/UniversalRungeKuttaStepper.hh
-        src/ExplicitMethods/UniversalRungeKuttaStepper/ButcherTable.hh
-        src/RikitakeModel/dx_dt.hh
-        src/RikitakeModel/Parameters.hh
-        src/RikitakeModel/State.hh
-        src/RikitakeModel/dx_dt.cpp
-        src/RikitakeModel/State.cpp
-        src/ExplicitMethods/RK4.cpp
-        src/ExplicitMethods/RK4.hh
-        src/ExplicitMethods/DOPRI8.cpp
-        src/ExplicitMethods/DOPRI8.hh
-        src/AdamsBashforth/AdamsBashforth.hh
-        src/AdamsBashforth/AdamsBashforth.hh
-        src/AdamsMoulton/AdamsMoulton.hh
-        src/AdamsMoulton/last_backward_difference.hh
+        src/cpp/main.cpp
+        src/cpp/System.hh
+        src/cpp/IStepper.hh
+        src/cpp/IOneStepper.hh
+        src/cpp/ExplicitMethods/UniversalRungeKuttaStepper/UniversalRungeKuttaStepper.hh
+        src/cpp/ExplicitMethods/UniversalRungeKuttaStepper/ButcherTable.hh
+        src/cpp/RikitakeModel/dx_dt.hh
+        src/cpp/RikitakeModel/Parameters.hh
+        src/cpp/RikitakeModel/State.hh
+        src/cpp/RikitakeModel/dx_dt.cpp
+        src/cpp/RikitakeModel/State.cpp
+        src/cpp/ExplicitMethods/RK4.cpp
+        src/cpp/ExplicitMethods/RK4.hh
+        src/cpp/ExplicitMethods/DOPRI8.cpp
+        src/cpp/ExplicitMethods/DOPRI8.hh
+        src/cpp/AdamsBashforth/AdamsBashforth.hh
+        src/cpp/AdamsBashforth/AdamsBashforth.hh
+        src/cpp/AdamsMoulton/AdamsMoulton.hh
+        src/cpp/AdamsMoulton/last_backward_difference.hh
+        src/cpp/solve_model.cpp
 )
 
 target_link_libraries(main ${Boost_LIBRARIES})

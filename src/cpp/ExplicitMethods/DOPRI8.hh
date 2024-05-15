@@ -3,7 +3,7 @@
 #ifndef MAIN_DOPRI8_HH
 #define MAIN_DOPRI8_HH
 
-#include "../ExplicitMethods/UniversalRungeKuttaStepper/UniversalRungeKuttaStepper.hh"
+#include "UniversalRungeKuttaStepper/UniversalRungeKuttaStepper.hh"
 
 /**
  * @class DOPRI8

@@ -1,7 +1,7 @@
 #ifndef MAIN_RK4_HH
 #define MAIN_RK4_HH
 
-#include "../ExplicitMethods//UniversalRungeKuttaStepper/UniversalRungeKuttaStepper.hh"
+#include "UniversalRungeKuttaStepper/UniversalRungeKuttaStepper.hh"
 
 /**
  * @brief The RK4 class represents the fourth-order Runge-Kutta method.

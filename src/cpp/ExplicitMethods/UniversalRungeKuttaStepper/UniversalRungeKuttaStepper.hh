@@ -38,7 +38,6 @@ public:
     void doStep() override {
         std::vector<T> k(stages);
 
-        T result = system.state;
         for (std::size_t i = 0; i < stages; ++i) {
             T sum = T();
             for (std::size_t j = 0; j < i; ++j) {
@@ -50,11 +49,10 @@ public:
 
         // $x(t+h) = x(t) + \sum_i{b_i k_i}$
         for (std::size_t i = 0; i < stages; ++i) {
-            result += system.step * butcherTable.b[i] * k[i];
+            system.state += system.step * butcherTable.b[i] * k[i];
         }
 
         system.time += system.step;
-        system.state = result;
     };
 
     /**
