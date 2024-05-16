@@ -9,7 +9,8 @@ struct System {
     P &params;
     double step;
     double time;
-    std::function<T(T, P)> dx_dt_;
+
+    T (*dx_dt_)(const T &, const P &);
 
     inline
     T dx_dt() {

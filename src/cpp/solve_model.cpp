@@ -1,5 +1,6 @@
 #include <iostream>
 #include <iomanip>
+#include <memory>
 
 #include "solve_model.hh"
 
@@ -24,19 +25,24 @@ void solve_model(SolverType solver, double h, unsigned steps,
 //    DOPRI8<State, Parametrs> dopri8(system);
 //    AdamsBashforth<State, Parametrs> adamsBashforth(system, rk4, 5);
 //    AdamsMoulton<State, Parametrs> adamsMoulton(system, rk4, 5, 5);
-    IStepper<State> *stepper;
+    std::unique_ptr<IStepper<State>> stepper;
     switch (solver) {
         case SolverType::RK4:
-            stepper = new RK4<State, Parametrs>(system);
+            stepper = std::make_unique<RK4<State, Parametrs>>(system);
             break;
         case SolverType::DOPRI8:
-            stepper = new DOPRI8<State, Parametrs>(system);
+            stepper = std::make_unique<DOPRI8<State, Parametrs>>(system);
             break;
         case SolverType::ADAMS_BASHFORTH:
-            stepper = new AdamsBashforth<State, Parametrs>(system, rk4, 5);
+            stepper = std::make_unique<AdamsBashforth<State, Parametrs>>(system,
+                                                                         rk4,
+                                                                         5);
             break;
         case SolverType::ADAMS_MOULTON:
-            stepper = new AdamsMoulton<State, Parametrs>(system, rk4, 5, 5);
+            stepper = std::make_unique<AdamsMoulton<State, Parametrs>>(system,
+                                                                       rk4,
+                                                                       5,
+                                                                       5);
             break;
         default:
             std::cerr << "Unknown solver type" << std::endl;

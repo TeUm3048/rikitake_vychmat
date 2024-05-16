@@ -15,7 +15,12 @@
  * @param params Параметры системы.
  * @return Новое состояние системы, полученное в результате дифференциального уравнения.
  */
-
-State dx_dt(const State &state, const Parametrs &params);
+inline
+State dx_dt(const State &state, const Parametrs &params) {
+    return {-params.nu * state.x + state.z * state.y,
+            -params.nu * state.y +
+            (state.z - params.A) * state.x,
+            1 - state.x * state.y};
+}
 
 #endif // MAIN_DX_DT_HH

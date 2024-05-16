@@ -27,6 +27,9 @@ public:
      * @return The current state.
      */
     virtual T getState() const = 0;
+
+    virtual ~IStepper() = default;
 };
+
 
 #endif // RK_IStepper
