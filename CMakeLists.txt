@@ -32,7 +32,6 @@ add_executable(main
         src/cpp/RikitakeModel/dx_dt.hh
         src/cpp/RikitakeModel/Parameters.hh
         src/cpp/RikitakeModel/State.hh
-        src/cpp/RikitakeModel/dx_dt.cpp
         src/cpp/RikitakeModel/State.cpp
         src/cpp/ExplicitMethods/RK4.cpp
         src/cpp/ExplicitMethods/RK4.hh
