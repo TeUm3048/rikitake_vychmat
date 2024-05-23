@@ -18,4 +18,10 @@ struct System {
     };
 };
 
+template<typename T>
+bool allclose(const T &a, const T &b, double rtol, double atol);
+
+template<typename T>
+double estimate_err(const T &a, const T &b, double rtol, double atol);
+
 #endif //MAIN_SYSTEM_HH

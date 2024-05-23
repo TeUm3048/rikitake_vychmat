@@ -6,6 +6,7 @@
 
 enum class SolverType {
     RK4,
+    DOPRI54,
     DOPRI8,
     ADAMS_BASHFORTH,
     ADAMS_MOULTON
@@ -18,6 +19,8 @@ inline std::istream &operator>>(std::istream &in, SolverType &solverType) {
 
     if (token == "RK4")
         solverType = SolverType::RK4;
+    else if (token == "DOPRI54" || token == "DOPRI45")
+        solverType = SolverType::DOPRI54;
     else if (token == "DOPRI8")
         solverType = SolverType::DOPRI8;
     else if (token == "ADAMS_BASHFORTH")

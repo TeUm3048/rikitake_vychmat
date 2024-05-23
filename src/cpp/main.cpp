@@ -9,7 +9,7 @@ namespace po = boost::program_options;
 
 int main(int ac, char *av[]) {
     po::options_description desc("Allowed options");
-
+    ConfigModel config_model;
     SolverType solver;
     unsigned steps;
     unsigned every_n_steps = 200;
@@ -19,16 +19,16 @@ int main(int ac, char *av[]) {
 
     solver_desc.add_options()
             ("solver",
-             po::value<SolverType>(&solver)->default_value(SolverType::RK4),
+             po::value<SolverType>(&config_model.solver)->default_value(SolverType::RK4),
              "Choose the solver type\n"
-             "RK4 | DOPRI8 | ADAMS_BASHFORTH | ADAMS_MOULTON")
-            ("steps,n", po::value<unsigned>(&steps)->default_value(1000),
+             "RK4 | DOPRI54 | DOPRI8 | ADAMS_BASHFORTH | ADAMS_MOULTON")
+            ("steps,n", po::value<unsigned>(&config_model.steps)->default_value(1000),
              "Set number of steps to count\n"
              "<unsigned>")
-            ("every", po::value<unsigned>(&every_n_steps)->default_value(1),
+            ("every", po::value<unsigned>(&config_model.every_n_steps)->default_value(1),
              "Print every n-th step\n"
              "<unsigned>")
-            ("step,H", po::value<double>(&step_size)->default_value(1e-3),
+            ("step,H", po::value<double>(&config_model.step_size)->default_value(1e-3),
              "Set step size\n"
              "<double>");
 
@@ -48,5 +48,5 @@ int main(int ac, char *av[]) {
         std::cout << desc << std::endl;
         return 1;
     }
-    solve_model(solver, step_size, steps, every_n_steps);
+    solve_model(config_model);
 }

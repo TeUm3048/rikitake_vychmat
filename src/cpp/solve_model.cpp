@@ -5,8 +5,7 @@
 #include "solve_model.hh"
 
 
-void solve_model(SolverType solver, double h, unsigned steps,
-                 unsigned every_n_steps) {
+void solve_model(ConfigModel &config) {
 
 
     double k = 2.;
@@ -19,16 +18,21 @@ void solve_model(SolverType solver, double h, unsigned steps,
     State state(k, k1, nu * k * k);
     Parametrs params{nu, nu * (k * k - k1 * k1)};
 
-    System<State, Parametrs> system = {state, params, h, 0, dx_dt};
+    System<State, Parametrs> system = {state, params, config.step_size, 0,
+                                       dx_dt};
 
     RK4<State, Parametrs> rk4(system);
 //    DOPRI8<State, Parametrs> dopri8(system);
 //    AdamsBashforth<State, Parametrs> adamsBashforth(system, rk4, 5);
 //    AdamsMoulton<State, Parametrs> adamsMoulton(system, rk4, 5, 5);
     std::unique_ptr<IStepper<State>> stepper;
-    switch (solver) {
+    switch (config.solver) {
         case SolverType::RK4:
             stepper = std::make_unique<RK4<State, Parametrs>>(system);
+            break;
+        case SolverType::DOPRI54:
+            stepper = std::make_unique<DOPRI54<State, Parametrs>>(system, 1e-8,
+                                                                  1e-5);
             break;
         case SolverType::DOPRI8:
             stepper = std::make_unique<DOPRI8<State, Parametrs>>(system);
@@ -57,15 +61,16 @@ void solve_model(SolverType solver, double h, unsigned steps,
             << "x" << sep
             << "y" << sep
             << "z" << std::endl;
-    size_t j = every_n_steps;
-    for (size_t i = 0; i < steps; ++i) {
-        if (j == every_n_steps) {
+    size_t j = config.every_n_steps;
+    for (size_t i = 0; i < config.steps; ++i) {
+        if (j == config.every_n_steps) {
             std::cout
 //                 << i << sep
                     << system.time << sep
                     << system.state.x << sep
                     << system.state.y << sep
-                    << system.state.z << std::endl;
+                    << system.state.z << sep
+                    << system.step << std::endl;
             j = 0;
         }
         stepper->doStep();

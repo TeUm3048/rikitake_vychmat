@@ -1,6 +1,8 @@
 #ifndef MAIN_STATE_HH
 #define MAIN_STATE_HH
 
+#include <algorithm>
+
 /**
  * @brief Класс, представляющий состояние системы.
  *
@@ -35,6 +37,12 @@ public:
     State operator*(const double &a) const;
 
     friend State operator*(const double &a, const State &state);
+
+    friend
+    bool allclose(const State &a, const State &b, double rtol, double atol);
+
+    friend
+    double estimate_err(const State &a, const State &b, double rtol, double atol);
 };
 
 #endif // MAIN_STATE_HH

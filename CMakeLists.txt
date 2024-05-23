@@ -42,6 +42,7 @@ add_executable(main
         src/cpp/AdamsMoulton/AdamsMoulton.hh
         src/cpp/AdamsMoulton/last_backward_difference.hh
         src/cpp/solve_model.cpp
+        src/cpp/DOPRI54/DOPRI54.hh
 )
 
 target_link_libraries(main ${Boost_LIBRARIES})

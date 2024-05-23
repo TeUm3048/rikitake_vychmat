@@ -6,11 +6,14 @@ classDiagram
 
     dx_dt_ --> Parameters
 
-    class System {
-        +State state
-        +Parameters parameters
-        +dx_dt_ dx_dt_
-        +time h
+ 
+    class System{
+        +State &amp;state
+        +Parameters &amp;params
+        +double step
+        +double time
+        +State (*dx_dt_)(const State &, const Parameters &)
+        +State dx_dt()
     }
 
     System *-- State
@@ -24,9 +27,9 @@ classDiagram
 
     IStepper --> System
 
-    RungeKuttaStepper ..|> IOneStepper
-    RungeKuttaStepper *-- System
-    RungeKuttaStepper *-- ButcherTable
+    UniversalRungeKuttaStepper ..|> IOneStepper
+    UniversalRungeKuttaStepper *-- System
+    UniversalRungeKuttaStepper *-- ButcherTable
 
     class ButcherTable{
         +std::vector<std::vector<double>> a
@@ -34,24 +37,28 @@ classDiagram
         +std::vector<double> c
     }
 
-    EulerStepper --|> RungeKuttaStepper
-    DOPRI8 --|> RungeKuttaStepper
-    MidpointStepper --|> RungeKuttaStepper
+    EulerStepper --|> UniversalRungeKuttaStepper
+    DOPRI8 --|> UniversalRungeKuttaStepper
+    MidpointStepper --|> UniversalRungeKuttaStepper
 
     class IMultistepper{
         +void doStep
         +State getState
     }
 
+    class DOPRI54
+
     IMultistepper ..|> IStepper
 
     AdamsBashforth ..|> IMultistepper
 
     AdamsMoulton ..|> IMultistepper
-    AdamsMoulton --> AdamsBashforth
+    AdamsMoulton *--> IOneStepper
 
-    AdamsBashforth --> IOneStepper
+    AdamsBashforth *--> IOneStepper
     IOneStepper ..|> IStepper
+
+    DOPRI54 ..|> IOneStepper
 
 
 ```
