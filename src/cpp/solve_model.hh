@@ -12,10 +12,12 @@
 struct ConfigModel {
     SolverType solver;
     double step_size;
-    unsigned steps;
-    unsigned every_n_steps;
+    double end_time;
+    double every_step;
+    double atol;
+    double rtol;
 };
 
 void solve_model(ConfigModel &config);
 
-#endif //MAIN_SOLVE_MODEL_HH
+#endif // MAIN_SOLVE_MODEL_HH

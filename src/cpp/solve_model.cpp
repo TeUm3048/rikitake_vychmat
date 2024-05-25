@@ -22,17 +22,16 @@ void solve_model(ConfigModel &config) {
                                        dx_dt};
 
     RK4<State, Parametrs> rk4(system);
-//    DOPRI8<State, Parametrs> dopri8(system);
-//    AdamsBashforth<State, Parametrs> adamsBashforth(system, rk4, 5);
-//    AdamsMoulton<State, Parametrs> adamsMoulton(system, rk4, 5, 5);
+
     std::unique_ptr<IStepper<State>> stepper;
     switch (config.solver) {
         case SolverType::RK4:
             stepper = std::make_unique<RK4<State, Parametrs>>(system);
             break;
         case SolverType::DOPRI54:
-            stepper = std::make_unique<DOPRI54<State, Parametrs>>(system, 1e-8,
-                                                                  1e-5);
+            stepper = std::make_unique<DOPRI54<State, Parametrs>>(system,
+                                                                  config.atol,
+                                                                  config.rtol);
             break;
         case SolverType::DOPRI8:
             stepper = std::make_unique<DOPRI8<State, Parametrs>>(system);
@@ -53,36 +52,42 @@ void solve_model(ConfigModel &config) {
             return;
     }
 
-    int width = 18;
-    std::cout << std::setprecision(8) << std::scientific;
+    int time_precision = int(std::abs(std::log10(config.every_step))) + 2;
+    int precision = 8;
+    
+    std::cout << std::setprecision(precision)
+              << std::scientific;
     std::cout
-//             << "id" << sep
             << "time" << sep
             << "x" << sep
             << "y" << sep
             << "z" << std::endl;
-    size_t j = config.every_n_steps;
-    for (size_t i = 0; i < config.steps; ++i) {
-        if (j == config.every_n_steps) {
+    double pt = 0;
+
+    while (system.time < config.end_time) {
+        if (abs(pt - system.time) <= system.step / 2) {
+
             std::cout
-//                 << i << sep
+                    << std::setprecision(time_precision)
                     << system.time << sep
+                    << std::setprecision(precision)
                     << system.state.x << sep
                     << system.state.y << sep
-                    << system.state.z << sep
-                    << system.step << std::endl;
-            j = 0;
+                    << system.state.z
+                    << std::endl;
+            pt += config.every_step;
         }
         stepper->doStep();
-        j++;
     }
 
     std::cout
-//             << steps << sep
+            << std::setprecision(time_precision)
             << system.time << sep
+            << std::setprecision(precision)
             << system.state.x << sep
             << system.state.y << sep
-            << system.state.z << std::endl;
+            << system.state.z
+            << std::endl;
 
 
 }

@@ -87,7 +87,7 @@ public:
 
 private:
     // The number of steps performed so far.
-    std::size_t run = 0;
+    int run = 0;
     // The system of ordinary differential equations to be integrated.
     System<T, P> &system;
     // The one-step integration scheme to be used for the first N steps.

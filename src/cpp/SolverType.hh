@@ -37,6 +37,9 @@ inline std::ostream &operator<<(std::ostream &out, const SolverType &solverType)
         case SolverType::RK4:
             out << "RK4";
             break;
+        case SolverType::DOPRI54:
+            out << "DOPRI54";
+            break;
         case SolverType::DOPRI8:
             out << "DOPRI8";
             break;

@@ -4,7 +4,6 @@
 #include <cmath>
 #include "../IOneStepper.hh"
 #include "../System.hh"
-// #include "../ExplicitMethods/UniversalRungeKuttaStepper/ButcherTable.hh"
 
 struct DOPRIButcherTable {
     std::vector<std::vector<double>> a;
@@ -33,19 +32,17 @@ public:
             system.step = min_step;
 
         bool step_accepted = false;
-        bool step_rejected = true;
 
         while (!step_accepted) {
             if (system.step < min_step) {
                 return;
             }
-            double time_new = system.time + system.step;
 
             std::vector<T> k(stages);
 
-            for (std::size_t i = 0; i < stages; ++i) {
+            for (int i = 0; i < stages; ++i) {
                 T sum = T();
-                for (std::size_t j = 0; j < i; ++j) {
+                for (int j = 0; j < i; ++j) {
                     sum += table.a[i][j] * k[j];
                 }
                 T k1;
@@ -55,12 +52,12 @@ public:
             }
             T k7;
             // $x(t+h) = x(t) + \sum_i{b_i k_i}$
-            for (std::size_t i = 0; i < stages; ++i) {
+            for (int i = 0; i < stages; ++i) {
                 state += system.step * table.b[i] * k[i];
             }
             k7 = system.dx_dt_(state, system.params);
 
-            for (std::size_t i = 0; i < stages; ++i) {
+            for (int i = 0; i < stages; ++i) {
                 err_state += system.step * table.e[i] * k[i];
             }
             err_state += system.step * table.e[6] * k7;
@@ -75,13 +72,12 @@ public:
 //            }
 //
             double err = estimate_err(state, err_state, rtol, atol);
-            if (0.9  < err && err <= 1. ) {
+            if (0.8  < err && err <= 1.1 + rtol ) {
                 step_accepted = true;
             } else {
                 double a = std::pow(err, -1. / 5);
-                std::cout << system.step << ',' << err << std::endl;
-                if (0.87 <= a && a < 1.) {
-                    a = 0.87;
+                if (0.5 <= a && a < 1.) {
+                    a = 0.5;
                 }
                 system.step *= a;
                 state = system.state;
