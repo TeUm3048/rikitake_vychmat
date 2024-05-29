@@ -5,6 +5,11 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
+def remove_prefix(s, prefix):
+    return s[len(prefix):] if s.startswith(prefix) else s
+
+def remove_suffix(s, suffix):
+    return s[:-len(suffix)] if s.endswith(suffix) else s
 
 def create_data(solver: str, to: float, step: float = None, atol=None, rtol=None, every: float = None, filename: str = None):
     if not os.path.exists("data"):
@@ -55,8 +60,10 @@ def save_distance(data1, data2, lable1, lable2):
 
     # if not os.path.exists("data"):
     #     os.makedirs("data")
-    l1 = lable1.removesuffix('.csv').removeprefix('data/').replace('/', '_')
-    l2 = lable2.removesuffix('.csv').removeprefix('data/').replace('/', '_')
+    l1 = remove_suffix(lable1,'.csv')
+    l1 = remove_suffix(l1,'data/').replace('/', '_')
+    l2 = remove_suffix(lable2,'.csv')
+    l2 = remove_prefix(l2,'data/').replace('/', '_')
 
     filename = f"data/distance_{l1}_{l2}.csv"
     dis.to_csv(filename)
@@ -78,7 +85,7 @@ def main():
     am_filename, am_data = generate_data(
         "ADAMS_MOULTON", to=end_point, step=0.0005, every=0.01)
     dopri54_filename, dopri54_data = generate_data(
-        "DOPRI54", to=end_point, atol=1e-8, rtol=1e-8, every=0.01)
+        "DOPRI54", to=end_point, atol=1e-8, rtol=1e-5, every=0.01)
 
     save_distance(rk4_data, dopri8_data, rk4_filename, dopri8_filename)
     save_distance(rk4_data, ab_data, rk4_filename, ab_filename)
