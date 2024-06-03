@@ -44,6 +44,7 @@ add_executable(main
         src/cpp/AdamsBashforth/AdamsBashforth.hh
         src/cpp/AdamsMoulton/AdamsMoulton.hh
         src/cpp/AdamsMoulton/last_backward_difference.hh
+        src/cpp/solve_model.hh
         src/cpp/solve_model.cpp
         src/cpp/DOPRI54/DOPRI54.hh
 )

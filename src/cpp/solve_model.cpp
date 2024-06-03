@@ -54,7 +54,7 @@ void solve_model(ConfigModel &config) {
 
     int time_precision = int(std::abs(std::log10(config.every_step))) + 2;
     int precision = 8;
-    
+
     std::cout << std::setprecision(precision)
               << std::scientific;
     std::cout
@@ -63,25 +63,44 @@ void solve_model(ConfigModel &config) {
             << "y" << sep
             << "z" << std::endl;
     double pt = 0;
-
+    State old_state = system.state;
+    double old_time = system.time;
     while (system.time < config.end_time) {
-        if (abs(pt - system.time) <= system.step / 2) {
+        if (system.time >= pt) {
+            double curr_step = system.step;
 
+            // Set previous values
+            double step = pt - old_time;
+            system.state = old_state;
+            system.step = step;
+            system.time = old_time;
+
+            stepper->doSimplifiedStep();
             std::cout
-                    << std::setprecision(time_precision)
+//                    << std::setprecision(time_precision)
                     << system.time << sep
                     << std::setprecision(precision)
                     << system.state.x << sep
                     << system.state.y << sep
                     << system.state.z
                     << std::endl;
+
+            // Restore step
+            system.step = curr_step;
+
+            old_time = system.time;
+            old_state = system.state;
+
             pt += config.every_step;
+            continue;
         }
+        old_time = system.time;
+        old_state = system.state;
         stepper->doStep();
     }
 
     std::cout
-            << std::setprecision(time_precision)
+//            << std::setprecision(time_precision)
             << system.time << sep
             << std::setprecision(precision)
             << system.state.x << sep

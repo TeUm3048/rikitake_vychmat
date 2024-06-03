@@ -20,6 +20,15 @@ public:
     virtual void doStep() = 0;
 
     /**
+     * @brief Perform a single step.
+     *
+     * Difference from doStep():
+     *
+     * This method don't change `step` attribute of `system`.
+     */
+    virtual void doSimplifiedStep() = 0;
+
+    /**
      * @brief Get the current state.
      * 
      * This method should be implemented by the derived class to return the current state of the simulation or computation.

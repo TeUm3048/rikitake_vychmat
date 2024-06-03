@@ -72,7 +72,7 @@ public:
 //            }
 //
             double err = estimate_err(state, err_state, rtol, atol);
-            if (0.8  < err && err <= 1.1 + rtol ) {
+            if (0.8 < err && err <= 1.1 + rtol) {
                 step_accepted = true;
             } else {
                 double a = std::pow(err, -1. / 5);
@@ -84,6 +84,35 @@ public:
                 err_state = system.state;
             }
         } // end while
+
+        system.state = state;
+        system.time += system.step;
+    };
+
+    inline
+    void doSimplifiedStep() override {
+
+        T state = system.state;
+
+        std::vector<T> k(stages);
+
+        for (int i = 0; i < stages; ++i) {
+            T sum = T();
+            for (int j = 0; j < i; ++j) {
+                sum += table.a[i][j] * k[j];
+            }
+            T k1;
+            k1 = system.dx_dt_(state + system.step * sum,
+                               system.params);
+            k[i] = k1;
+        }
+        // $x(t+h) = x(t) + \sum_i{b_i k_i}$
+        for (int i = 0; i < stages; ++i) {
+            state += system.step * table.b[i] * k[i];
+        }
+
+
+
 
         system.state = state;
         system.time += system.step;

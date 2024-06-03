@@ -56,6 +56,17 @@ public:
         system.time += system.step;
     };
 
+    inline
+    void doSimplifiedStep() override {
+        if (run < N) {
+            oneStepper.doSimplifiedStep();
+            dx_dt_circular_buffer.push_back(system.dx_dt());
+            run++;
+            return;
+        }
+        doStep();
+    };
+
     /**
      * @brief Gets the current state of the system.
      *

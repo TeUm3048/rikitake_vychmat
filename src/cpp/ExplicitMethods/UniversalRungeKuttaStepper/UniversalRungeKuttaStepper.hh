@@ -55,6 +55,11 @@ public:
         system.time += system.step;
     };
 
+    inline
+    void doSimplifiedStep() override {
+        doStep();
+    };
+
     /**
      * @brief Returns the current state of the system.
      * 
