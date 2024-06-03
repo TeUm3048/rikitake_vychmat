@@ -27,7 +27,7 @@ public:
      * @param numCorrSteps_ The number of correction steps to be performed after the prediction step.
      */
     AdamsMoulton(System<T, P> &system1, IOneStepper<T> &oneStepper_,
-                 int numOneStepSteps, int numCorrSteps_)
+                 size_t numOneStepSteps, size_t numCorrSteps_)
             : oneStepper(oneStepper_), system(system1),
               dx_dt_circular_buffer(numOneStepSteps),
               N(numOneStepSteps), numCorrSteps(numCorrSteps_) {};
@@ -53,13 +53,13 @@ public:
         // x_n + h\sum^{k}_{i=0} {u_{-i}f(x_{n-i},x_{n-i})}$
         T x_next;
         dx_dt_circular_buffer.push_back(system.dx_dt());
-        for (int i = 0; i < N; ++i) {
+        for (size_t i = 0; i < N; ++i) {
             x_next += corrector[i] * dx_dt_circular_buffer[i];
         }
         x_next = system.state + system.step / c * x_next;
 
         // EC * N
-        for (int i = 0; i < numCorrSteps; ++i) {
+        for (size_t i = 0; i < numCorrSteps; ++i) {
             // Evaluation
             T dx_dt_next = system.dx_dt_(x_next, system.params);
             dx_dt_circular_buffer.insert(dx_dt_circular_buffer.end(),
@@ -92,7 +92,7 @@ public:
 
 private:
     // The number of steps performed so far.
-    int run = 0;
+    size_t run = 0;
     // The system of ordinary differential equations to be integrated.
     System<T, P> &system;
     // The one-step integration scheme to be used for the first N steps.
@@ -100,9 +100,9 @@ private:
     // Circular buffer to store the derivatives of the state variables.
     boost::circular_buffer<T> dx_dt_circular_buffer;
     // The number of steps to use the one-step integration scheme before switching to the multi-step scheme.
-    int N;
+    size_t N;
     // The number of correction steps to be performed after the prediction step.
-    int numCorrSteps;
+    size_t numCorrSteps;
     // Coefficients for the multi-step scheme.
     std::vector<std::tuple<double, std::vector<double>, double>> correctors = {
             {1,      {1},                                                                    1},
