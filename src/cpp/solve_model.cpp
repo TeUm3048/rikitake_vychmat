@@ -52,7 +52,6 @@ void solve_model(ConfigModel &config) {
             return;
     }
 
-    int time_precision = int(std::abs(std::log10(config.every_step))) + 2;
     int precision = 8;
 
     std::cout << std::setprecision(precision)
