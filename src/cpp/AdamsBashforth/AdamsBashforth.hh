@@ -25,10 +25,11 @@ public:
      * @param oneStepper_ The one-step integration scheme to be used for the first N steps.
      * @param numOneStepSteps The number of steps to use the one-step integration scheme before switching to the multi-step scheme.
      */
-    AdamsBashforth(System<T, P> &system1, IOneStepper<T> &oneStepper_, size_t N_)
-            : oneStepper(oneStepper_), system(system1),
-              dx_dt_circular_buffer(N_),
-              N(N_) {};
+    AdamsBashforth(System<T, P> &system1, IOneStepper<T> &oneStepper_,
+                   size_t N_) : system(system1),
+                                oneStepper(oneStepper_),
+                                dx_dt_circular_buffer(N_),
+                                N(N_) {};
 
     /**
      * @brief Performs a single integration step.
@@ -77,8 +78,6 @@ public:
     };
 
 private:
-    // The number of steps performed so far.F
-    std::size_t run = 0;
     // The system of ordinary differential equations to be integrated.
     System<T, P> &system;
     // The one-step integration scheme to be used for the first N steps.
@@ -87,6 +86,8 @@ private:
     boost::circular_buffer<T> dx_dt_circular_buffer;
     // The number of steps to use the one-step integration scheme before switching to the multi-step scheme.
     std::size_t N;
+    // The number of steps performed so far.F
+    std::size_t run = 0;
     // Coefficients for the multi-step scheme.
     std::vector<std::tuple<double, std::vector<double>>> correctors = {
             {1,      {1}},

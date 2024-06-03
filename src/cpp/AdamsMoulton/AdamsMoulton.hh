@@ -28,9 +28,11 @@ public:
      */
     AdamsMoulton(System<T, P> &system1, IOneStepper<T> &oneStepper_,
                  size_t numOneStepSteps, size_t numCorrSteps_)
-            : oneStepper(oneStepper_), system(system1),
+            : system(system1),
+              oneStepper(oneStepper_),
               dx_dt_circular_buffer(numOneStepSteps),
-              N(numOneStepSteps), numCorrSteps(numCorrSteps_) {};
+              N(numOneStepSteps),
+              numCorrSteps(numCorrSteps_) {};
 
     /**
      * @brief Performs a single integration step.
@@ -91,8 +93,6 @@ public:
     };
 
 private:
-    // The number of steps performed so far.
-    size_t run = 0;
     // The system of ordinary differential equations to be integrated.
     System<T, P> &system;
     // The one-step integration scheme to be used for the first N steps.
@@ -101,6 +101,8 @@ private:
     boost::circular_buffer<T> dx_dt_circular_buffer;
     // The number of steps to use the one-step integration scheme before switching to the multi-step scheme.
     size_t N;
+    // The number of steps performed so far.
+    size_t run = 0;
     // The number of correction steps to be performed after the prediction step.
     size_t numCorrSteps;
     // Coefficients for the multi-step scheme.
