@@ -91,9 +91,9 @@ def main():
 
     end_point = 20
 
-    rk4_filename, rk4_data = generate_data(
-        "RK4", to=end_point, step=0.0005, every=0.01)
-    logging.info("Calculated with RK4 and save data to %s", rk4_filename)
+    # rk4_filename, rk4_data = generate_data(
+    #     "RK4", to=end_point, step=0.0005, every=0.01)
+    # logging.info("Calculated with RK4 and save data to %s", rk4_filename)
 
     dopri8_filename, dopri8_data = generate_data(
         "dopri8", to=end_point, step=0.01, every=0.01)
@@ -114,16 +114,18 @@ def main():
     logging.info("Calculated with DOPRI54 and save data to %s",
                  dopri54_filename)
 
-    save_distance(rk4_data, dopri8_data, rk4_filename, dopri8_filename)
+    save_distance(dopri54_data, dopri8_data, dopri54_filename, dopri8_filename)
 
-    save_distance(rk4_data, ab_data, rk4_filename, ab_filename)
-
-    save_distance(rk4_data, am_data, rk4_filename, am_filename)
-
-    save_distance(rk4_data, dopri54_data,
-                  rk4_filename, dopri54_filename)
+    save_distance(dopri54_data, ab_data, dopri54_filename, ab_filename)
 
     save_distance(dopri54_data, am_data, dopri54_filename, am_filename)
+
+    save_distance(dopri8_data, ab_data, dopri8_filename, ab_filename)
+    
+    save_distance(dopri8_data, am_data, dopri8_filename, am_filename)
+    
+    save_distance(ab_data, am_data, ab_filename, am_filename)
+    
 
 
 if __name__ == "__main__":
