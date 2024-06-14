@@ -22,6 +22,7 @@ void solve_model(ConfigModel &config) {
                                        dx_dt};
 
     RK4<State, Parametrs> rk4(system);
+    DOPRI8<State, Parametrs> dopri8(system);
 
     std::unique_ptr<IStepper<State>> stepper;
     switch (config.solver) {
@@ -52,7 +53,7 @@ void solve_model(ConfigModel &config) {
             return;
     }
 
-    int precision = 8;
+    int precision = 16;
 
     std::cout << std::setprecision(precision)
               << std::scientific;
@@ -65,7 +66,8 @@ void solve_model(ConfigModel &config) {
     State old_state = system.state;
     double old_time = system.time;
     while (system.time < config.end_time) {
-        if (system.time >= pt) {
+        if (system.time > pt) {
+
             double curr_step = system.step;
 
             // Set previous values
@@ -92,6 +94,16 @@ void solve_model(ConfigModel &config) {
 
             pt += config.every_step;
             continue;
+        } else if (system.time == pt){
+            std::cout
+//                    << std::setprecision(time_precision)
+                    << system.time << sep
+                    << std::setprecision(precision)
+                    << system.state.x << sep
+                    << system.state.y << sep
+                    << system.state.z
+                    << std::endl;
+            pt += config.every_step;
         }
         old_time = system.time;
         old_state = system.state;

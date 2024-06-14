@@ -38,7 +38,8 @@ def create_data(solver: str, to: float, step: float = None, atol=None, rtol=None
 
 def generate_data(solver: str, to: float, step: float = None, atol=None, rtol=None, every: float = None, filename: str = None):
     solver = solver.upper()
-
+    if step is not None and every < step:
+        every = step
     if solver == "DOPRI54":
         if filename is None:
             filename = f"data/{solver}_{to}_a{atol}_r{rtol}_{every}.csv"
@@ -77,7 +78,43 @@ def save_distance(data1, data2, lable1, lable2):
     filename = f"data/distance_{l1}_{l2}.csv"
     dis.to_csv(filename)
     logging.info("Saved distance to %s", filename)
+    save_plot_distance(lable1, lable2, filename)
     return filename
+
+
+def save_plot_distance(lable1, lable2, data_filepath):
+    l1 = remove_suffix(lable1, '.csv')
+    l1 = remove_prefix(l1, 'data/').replace('/', '_')
+    l2 = remove_suffix(lable2, '.csv')
+    l2 = remove_prefix(l2, 'data/').replace('/', '_')
+    # Извлекаем имена методов из имени файла данных
+
+    data_filepath = f"data/distance_{l1}_{l2}.csv"
+
+    # Формируем название выходного файла
+    output_filename = f"plots/{l1}_{l2}.gp"
+
+    t1 = l1.replace("_", r"\\_")
+    t2 = l2.replace("_", r"\\_")
+    # Генерируем код для gnuplot
+    gnuplot_code = f"""set datafile separator ","
+set title "Distance between {t1} and {t2}"
+set xlabel "time"
+set ylabel "Distance"
+set grid
+plot '{data_filepath}' using 1:2 with linespoints
+
+pause -1
+"""
+
+    if not os.path.exists("plots"):
+        os.makedirs("plots")
+    
+    # Сохраняем код в файл
+    with open(output_filename, 'w') as f:
+        f.write(gnuplot_code)
+
+    logging.info("GNUplot script saved to %s", output_filename)
 
 
 def main():
@@ -91,13 +128,24 @@ def main():
 
     end_point = 20
 
-    # rk4_filename, rk4_data = generate_data(
-    #     "RK4", to=end_point, step=0.0005, every=0.01)
-    # logging.info("Calculated with RK4 and save data to %s", rk4_filename)
+    rk4_filename, rk4_data = generate_data(
+        "RK4", to=end_point, step=0.0005, every=0.01)
+    logging.info("Calculated with RK4 and save data to %s", rk4_filename)
 
+    step = 0.01
     dopri8_filename, dopri8_data = generate_data(
-        "dopri8", to=end_point, step=0.01, every=0.01)
+        "dopri8", to=end_point, step=step, every=0.01)
     logging.info("Calculated with dopri8 and save data to %s", dopri8_filename)
+
+    dopri8_next_filename, dopri8_next_data = generate_data(
+        "dopri8", to=end_point, step=step/10, every=0.01)
+    logging.info("Calculated with dopri8_next and save data to %s",
+                 dopri8_next_filename)
+    
+    dopri8_2_next_filename, dopri8_2_next_data = generate_data(
+        "dopri8", to=end_point, step=step/100, every=0.01)
+    logging.info("Calculated with dopri8_2_next and save data to %s",
+                 dopri8_2_next_filename)
 
     ab_filename, ab_data = generate_data(
         "ADAMS_BASHFORTH", to=end_point, step=0.01, every=0.01)
@@ -105,27 +153,33 @@ def main():
         "Calculated with ADAMS_BASHFORTH and save data to %s", ab_filename)
 
     am_filename, am_data = generate_data(
-        "ADAMS_MOULTON", to=end_point, step=0.0005, every=0.01)
+        "ADAMS_MOULTON", to=end_point, step=0.01, every=0.01)
     logging.info(
         "Calculated with ADAMS_MOULTON and save data to %s", am_filename)
 
     dopri54_filename, dopri54_data = generate_data(
-        "DOPRI54", to=end_point, atol=1e-8, rtol=1e-5, every=0.01)
+        "DOPRI54", to=end_point, atol=1e-3, rtol=1e-11, every=0.01)
     logging.info("Calculated with DOPRI54 and save data to %s",
                  dopri54_filename)
 
-    save_distance(dopri54_data, dopri8_data, dopri54_filename, dopri8_filename)
+    save_distance(dopri8_data, dopri54_data, dopri8_filename, dopri54_filename)
 
     save_distance(dopri54_data, ab_data, dopri54_filename, ab_filename)
 
     save_distance(dopri54_data, am_data, dopri54_filename, am_filename)
 
     save_distance(dopri8_data, ab_data, dopri8_filename, ab_filename)
+
+    save_distance(dopri8_data, dopri8_next_data,
+                  dopri8_filename, dopri8_next_filename)
     
+    save_distance(dopri8_next_data, dopri8_2_next_data,
+                  dopri8_next_filename, dopri8_2_next_filename)
+
     save_distance(dopri8_data, am_data, dopri8_filename, am_filename)
-    
+
     save_distance(ab_data, am_data, ab_filename, am_filename)
-    
+
 
 
 if __name__ == "__main__":

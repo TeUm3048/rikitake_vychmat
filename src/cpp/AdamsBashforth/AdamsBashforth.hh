@@ -60,8 +60,8 @@ public:
     inline
     void doSimplifiedStep() override {
         if (run < N) {
-            oneStepper.doSimplifiedStep();
             dx_dt_circular_buffer.push_back(system.dx_dt());
+            oneStepper.doSimplifiedStep();
             run++;
             return;
         }

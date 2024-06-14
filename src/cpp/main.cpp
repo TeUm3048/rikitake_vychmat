@@ -52,8 +52,7 @@ int main(int ac, char *av[]) {
             std::cout << desc << std::endl;
             return 0;
         }
-
-        if (!vm.count("every")) {
+        if (config_model.every_step < config_model.step_size) {
             config_model.every_step = config_model.step_size;
         }
     } catch (std::exception &ex) {

@@ -35,7 +35,7 @@ public:
 
         while (!step_accepted) {
             if (system.step < min_step) {
-                return;
+                break;
             }
 
             std::vector<T> k(stages);
@@ -110,8 +110,6 @@ public:
         for (int i = 0; i < stages; ++i) {
             state += system.step * table.b[i] * k[i];
         }
-
-
 
 
         system.state = state;
