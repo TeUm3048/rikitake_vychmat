@@ -39,13 +39,13 @@ void solve_model(ConfigModel &config) {
             break;
         case SolverType::ADAMS_BASHFORTH:
             stepper = std::make_unique<AdamsBashforth<State, Parametrs>>(system,
-                                                                         rk4,
-                                                                         5);
+                                                                         dopri8,
+                                                                         8);
             break;
         case SolverType::ADAMS_MOULTON:
             stepper = std::make_unique<AdamsMoulton<State, Parametrs>>(system,
-                                                                       rk4,
-                                                                       5,
+                                                                       dopri8,
+                                                                       8,
                                                                        5);
             break;
         default:
@@ -69,6 +69,8 @@ void solve_model(ConfigModel &config) {
         if (system.time > pt) {
 
             double curr_step = system.step;
+            double curr_time = system.time;
+            State curr_state = system.state;
 
             // Set previous values
             double step = pt - old_time;
@@ -88,6 +90,8 @@ void solve_model(ConfigModel &config) {
 
             // Restore step
             system.step = curr_step;
+            system.time = curr_time;
+            system.state = curr_state;
 
             old_time = system.time;
             old_state = system.state;
