@@ -148,12 +148,12 @@ def main():
                  dopri8_2_next_filename)
 
     ab_filename, ab_data = generate_data(
-        "ADAMS_BASHFORTH", to=end_point, step=0.01, every=0.01)
+        "ADAMS_BASHFORTH", to=end_point, step=0.001, every=0.01)
     logging.info(
         "Calculated with ADAMS_BASHFORTH and save data to %s", ab_filename)
 
     am_filename, am_data = generate_data(
-        "ADAMS_MOULTON", to=end_point, step=0.01, every=0.01)
+        "ADAMS_MOULTON", to=end_point, step=0.001, every=0.01)
     logging.info(
         "Calculated with ADAMS_MOULTON and save data to %s", am_filename)
 

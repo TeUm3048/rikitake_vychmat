@@ -39,26 +39,27 @@ public:
      * Otherwise, it uses the multi-step scheme.
      */
     inline void doStep() override {
-        if (run < N ) {
+        // One step integration scheme
+        if (run < N) {
             dx_dt_circular_buffer.push_back(system.dx_dt());
-            double s = system.step;
-            int n = 2;
-            system.step = system.step / static_cast<double>(n);
-            for (int i = 0; i < n; ++i) {
-                oneStepper.doStep();
+            if (run != N - 1) {
+                auto s = system.step;
+                system.step = system.step / m;
+
+                for (int i = 0; i < m; ++i) {
+                    oneStepper.doStep();
+                }
+
+                system.step = s;
             }
-            system.step = s;
             run++;
             return;
         }
+
+        // Multi-step integration scheme
+        
         auto [c, corrector] = correctors[N - 1];
-        // x_{n+1} =
-        // x_n + h\sum^{k}_{i=0} {u_{-i}f(x_{n-i},x_{n-i})}$
         T fix;
-//        for (size_t i = 0; i < N; ++i) {
-//            auto d = dx_dt_circular_buffer[i];
-//            std::cout << d.x << std::endl;
-//        }
         for (size_t i = 0; i < N; ++i) {
             auto d = dx_dt_circular_buffer[i];
             fix += corrector[i] * d;
@@ -90,20 +91,22 @@ private:
     boost::circular_buffer<T> dx_dt_circular_buffer;
     // The number of steps to use the one-step integration scheme before switching to the multi-step scheme.
     std::size_t N;
-    // The number of steps performed so far.F
+    // The number of steps performed so far.
     std::size_t run = 0;
     // Coefficients for the multi-step scheme.
     std::vector<std::tuple<double, std::vector<double>>> correctors = {
-            {1,      {1}},
-            {2,      {-1,     3}},
-            {12,     {5,      -16,     23}},
-            {24,     {-9,     37,      -59,     55}},
-            {720,    {251,    -1274,   2616,    -2774,   1901}},
-            // {720,    {1901,    -2774,   2616,    -1274,   251}},
-            {1440,   {-475,   2877,    -7298,   9982,    -7923,    4277}},
-            {60480,  {19825,  -115732, 336918,  -561717, 587482,   -392835, 173927}},
-            {120960, {-36799, 295767,  -1041723., 2102243., -2664477., 2183877.,  -1152169., 434241.}},
+            {1.,      {1.}},
+            {2.,      {-1.,     3.}},
+            {12.,     {5.,      -16.,     23.}},
+            {24.,     {-9.,     37.,      -59.,     55.}},
+            {720.,    {251.,    -1274.,   2616.,    -2774.,   1901.}},
+            {1440.,   {-475.,   2877.,    -7298.,   9982.,    -7923.,    4277.}},
+            {60480.,  {19825.,  -115732., 336918.,  -561717., 587482.,   -392835., 173927.}},
+            {120960., {-36799., 295767.,  -1041723., 2102243., -2664477., 2183877.,  -1152169., 434241.}},
     };
+    // The number to divide the number of one-step integration scheme into smaller steps.
+    int m = 2;
+
 };
 
 #endif // MAIN_ADAMSBASHFORTH_HH

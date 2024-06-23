@@ -37,23 +37,30 @@ public:
     /**
      * @brief Performs a single integration step.
      *
-     * This method calculates the next state of the system by using the Adams-Bashforth method.
+     * This method calculates the next state of the system by using the Adams-Bashforth-Moulton method.
      * If the number of steps performed is less than N, it uses the one-step integration scheme.
      * Otherwise, it uses the multi-step scheme.
      */
     inline void doStep() override {
-        if (run < N ) {
+        // One step integration scheme
+        if (run < N) {
             dx_dt_circular_buffer.push_back(system.dx_dt());
-            double s = system.step;
-            int n = 2;
-            system.step = system.step / static_cast<double>(n);
-            for (int i = 0; i < n; ++i) {
-                oneStepper.doStep();
+            if (run != N - 1) {
+                auto s = system.step;
+                system.step = system.step / m;
+
+                for (int i = 0; i < m; ++i) {
+                    oneStepper.doStep();
+                }
+
+                system.step = s;
             }
-            system.step = s;
             run++;
             return;
         }
+
+        // Multi-step integration scheme
+
         auto [c, corrector, gamma] = correctors[N - 1];
 
         // Prediction
@@ -64,31 +71,18 @@ public:
             x_next += corrector[i] * dx_dt_circular_buffer[i];
         }
         x_next = system.state + system.step / c * x_next;
-//       for (size_t i = 0; i < N; ++i) {
-//           auto d = dx_dt_circular_buffer[i];
-//           std::cout << d.x << std::endl;
-//       }
-//       std::cout << std::endl;
+
 
         T dx_dt_next = system.dx_dt_(x_next, system.params);
         dx_dt_circular_buffer.push_back(dx_dt_next);
-//        for (size_t i = 0; i < N; ++i) {
-//            auto d = dx_dt_circular_buffer[i];
-//            std::cout << d.x << std::endl;
-//        }
-//        std::cout << std::endl;
-        // EC * N
+
+        // EC * numCorrSteps
         for (size_t i = 0; i < numCorrSteps; ++i) {
             // Evaluation
             T dx_dt_next = system.dx_dt_(x_next, system.params);
             dx_dt_circular_buffer.pop_back();
             dx_dt_circular_buffer.push_back(dx_dt_next);
 
-//            for (size_t i = 0; i < N; ++i) {
-//                auto d = dx_dt_circular_buffer[i];
-//                std::cout << d.x << std::endl;
-//            }
-//            std::cout << std::endl;
 
             // Correction
             x_next += system.step * gamma / corrector[N-1] *
@@ -99,7 +93,6 @@ public:
 
         system.state = x_next;
         system.time += system.step;
-        // std::cout << system.time << ',' << system.state.x << std::endl;
     };
 
     inline void doSimplifiedStep() override {
@@ -139,6 +132,8 @@ private:
             {60480,  {19825,  -115732, 336918,    -561717,  587482,    -392835,  173927},             -863},
             {120960, {-36799, 295767,  -1041723., 2102243., -2664477., 2183877., -1152169., 434241.}, 1375},
     };
+    // The number to divide the number of one-step integration scheme into smaller steps.
+    int m = 2;
 };
 
 

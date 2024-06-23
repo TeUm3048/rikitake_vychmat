@@ -40,12 +40,12 @@ void solve_model(ConfigModel &config) {
         case SolverType::ADAMS_BASHFORTH:
             stepper = std::make_unique<AdamsBashforth<State, Parametrs>>(system,
                                                                          dopri8,
-                                                                         8);
+                                                                         6);
             break;
         case SolverType::ADAMS_MOULTON:
             stepper = std::make_unique<AdamsMoulton<State, Parametrs>>(system,
                                                                        dopri8,
-                                                                       8,
+                                                                       6,
                                                                        5);
             break;
         default:
